@@ -4,13 +4,23 @@
 
 ## ClearHead API
 
-1. Levantar la base de datos postgres
+1. Clonar proyecto
+
+2. npm install
+
+```bash
+$ npm install
+```
+
+3. Clonar el archivo `.env.template` y renombrarlo a `.env`
+4. Cambiar las variables de entorno
+5. Levantar la base de datos postgres
 
 ```bash
 $ docker-compose up -d
 ```
 
-## Running the app
+6. Levantar la aplicación
 
 ```bash
 # development

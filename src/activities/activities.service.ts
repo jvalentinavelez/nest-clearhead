@@ -9,7 +9,7 @@ import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 
@@ -49,7 +49,13 @@ export class ActivitiesService {
     if (isUUID(term)) {
       activity = await this.activityRepository.findOneBy({ id: term });
     } else {
-      activity = await this.activityRepository.findOneBy({ slug: term });
+      const queryBuilder = this.activityRepository.createQueryBuilder();
+      activity = await queryBuilder
+        .where(' UPPER(title)=:title or slug=:slug', {
+          title: term.toUpperCase(),
+          slug: term.toLowerCase(),
+        })
+        .getOne();
     }
     if (!activity) {
       throw new NotFoundException(`Activity with term ${term} not found`);

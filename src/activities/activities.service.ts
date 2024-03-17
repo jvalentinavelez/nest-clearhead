@@ -10,6 +10,7 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
 import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -31,13 +32,14 @@ export class ActivitiesService {
   }
 
   //TODO: Paginar
-  async findAll() {
-    try {
-      const activities = await this.activityRepository.find({});
-      return activities;
-    } catch (error) {
-      this.handleDBExceptions(error);
-    }
+  async findAll(paginatioDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginatioDto;
+    const activities = await this.activityRepository.find({
+      take: limit,
+      skip: offset,
+      //TODO: relaciones
+    });
+    return activities;
   }
 
   async findOne(id: string): Promise<Activity> {

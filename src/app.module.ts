@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from './activities/activities.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ActivitiesModule } from './activities/activities.module';
       synchronize: true,
     }),
     ActivitiesModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],

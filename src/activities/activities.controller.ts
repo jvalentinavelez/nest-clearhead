@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { Activity } from './entities/activity.entity';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -22,8 +24,8 @@ export class ActivitiesController {
   }
 
   @Get()
-  findAll() {
-    return this.activitiesService.findAll();
+  findAll(@Query() paginatioDto: PaginationDto) {
+    return this.activitiesService.findAll(paginatioDto);
   }
 
   @Get(':id')

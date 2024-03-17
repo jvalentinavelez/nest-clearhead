@@ -28,9 +28,9 @@ export class ActivitiesController {
     return this.activitiesService.findAll(paginatioDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Activity> {
-    return this.activitiesService.findOne(id);
+  @Get(':term')
+  findOne(@Param('term') term: string): Promise<Activity> {
+    return this.activitiesService.findOne(term);
   }
 
   @Patch(':id')

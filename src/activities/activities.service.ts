@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from './entities/activity.entity';
 import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { validate as isUUID } from 'uuid';
 
 @Injectable()
 export class ActivitiesService {
@@ -42,10 +43,16 @@ export class ActivitiesService {
     return activities;
   }
 
-  async findOne(id: string): Promise<Activity> {
-    const activity = await this.activityRepository.findOneBy({ id });
+  async findOne(term: string): Promise<Activity> {
+    let activity: Activity;
+
+    if (isUUID(term)) {
+      activity = await this.activityRepository.findOneBy({ id: term });
+    } else {
+      activity = await this.activityRepository.findOneBy({ slug: term });
+    }
     if (!activity) {
-      throw new NotFoundException(`Activity with id ${id} not found`);
+      throw new NotFoundException(`Activity with term ${term} not found`);
     }
     return activity;
   }

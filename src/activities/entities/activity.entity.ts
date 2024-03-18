@@ -3,8 +3,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ActivityImage } from './';
 
 @Entity()
 export class Activity {
@@ -46,6 +48,12 @@ export class Activity {
       .replaceAll(' ', '_')
       .replaceAll("'", '');
   }
+
+  //images
+  @OneToMany(() => ActivityImage, (activityImage) => activityImage.activity, {
+    cascade: true,
+  })
+  images?: ActivityImage;
 
   @BeforeUpdate()
   CheckSlugUpdate() {

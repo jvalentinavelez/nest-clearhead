@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { IsArray, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateActivityDto {
   @IsString()
@@ -12,4 +12,9 @@ export class CreateActivityDto {
   @IsString()
   @IsOptional()
   slug?: string;
+
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  tags?: string[];
 }

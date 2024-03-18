@@ -8,10 +8,10 @@ import {
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Activity } from './entities/activity.entity';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
+import { Activity, ActivityImage } from './entities';
 
 @Injectable()
 export class ActivitiesService {
@@ -20,13 +20,21 @@ export class ActivitiesService {
   constructor(
     @InjectRepository(Activity)
     private readonly activityRepository: Repository<Activity>,
+    @InjectRepository(ActivityImage)
+    private readonly activityImageRepository: Repository<ActivityImage>,
   ) {}
 
   async create(createActivityDto: CreateActivityDto) {
     try {
-      const activity = this.activityRepository.create(createActivityDto);
+      const { images = [], ...activityDetails } = createActivityDto;
+      const activity = this.activityRepository.create({
+        ...activityDetails,
+        images: images.map((image) =>
+          this.activityImageRepository.create({ url: image }),
+        ),
+      });
       await this.activityRepository.save(activity);
-      return activity;
+      return { ...activity, images };
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -67,6 +75,7 @@ export class ActivitiesService {
     const activity = await this.activityRepository.preload({
       id: id,
       ...updateActivityDto,
+      images: [],
     });
     if (!activity)
       throw new NotFoundException(`Activitiy with id ${id} not found`);

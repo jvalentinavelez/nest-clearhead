@@ -53,7 +53,7 @@ export class Activity {
   @OneToMany(() => ActivityImage, (activityImage) => activityImage.activity, {
     cascade: true,
   })
-  images?: ActivityImage;
+  images?: ActivityImage[];
 
   @BeforeUpdate()
   CheckSlugUpdate() {

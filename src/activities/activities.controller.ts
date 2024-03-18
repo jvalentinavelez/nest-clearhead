@@ -30,8 +30,8 @@ export class ActivitiesController {
   }
 
   @Get(':term')
-  findOne(@Param('term') term: string): Promise<Activity> {
-    return this.activitiesService.findOne(term);
+  findOne(@Param('term') term: string) {
+    return this.activitiesService.findOnePlain(term);
   }
 
   @Patch(':id')

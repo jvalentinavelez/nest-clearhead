@@ -46,9 +46,14 @@ export class ActivitiesService {
     const activities = await this.activityRepository.find({
       take: limit,
       skip: offset,
-      //TODO: relaciones
+      relations: {
+        images: true,
+      },
     });
-    return activities;
+    return activities.map(({ images, ...rest }) => ({
+      ...rest,
+      images: images.map((img) => img.url),
+    }));
   }
 
   async findOne(term: string): Promise<Activity> {
@@ -57,18 +62,28 @@ export class ActivitiesService {
     if (isUUID(term)) {
       activity = await this.activityRepository.findOneBy({ id: term });
     } else {
-      const queryBuilder = this.activityRepository.createQueryBuilder();
+      const queryBuilder =
+        this.activityRepository.createQueryBuilder('activity');
       activity = await queryBuilder
         .where(' UPPER(title)=:title or slug=:slug', {
           title: term.toUpperCase(),
           slug: term.toLowerCase(),
         })
+        .leftJoinAndSelect('activity.images', 'activityImages')
         .getOne();
     }
     if (!activity) {
       throw new NotFoundException(`Activity with term ${term} not found`);
     }
     return activity;
+  }
+
+  async findOnePlain(term: string) {
+    const { images = [], ...rest } = await this.findOne(term);
+    return {
+      ...rest,
+      images: images.map((image) => image.url),
+    };
   }
 
   async update(id: string, updateActivityDto: UpdateActivityDto) {

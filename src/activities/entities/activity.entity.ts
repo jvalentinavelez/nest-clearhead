@@ -52,6 +52,7 @@ export class Activity {
   //images
   @OneToMany(() => ActivityImage, (activityImage) => activityImage.activity, {
     cascade: true,
+    eager: true,
   })
   images?: ActivityImage[];
 

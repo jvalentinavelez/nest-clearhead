@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
@@ -35,10 +36,10 @@ export class ActivitiesController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateActivityDto: UpdateActivityDto,
   ) {
-    return this.activitiesService.update(+id, updateActivityDto);
+    return this.activitiesService.update(id, updateActivityDto);
   }
 
   @Delete(':id')

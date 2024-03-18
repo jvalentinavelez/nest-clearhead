@@ -63,8 +63,19 @@ export class ActivitiesService {
     return activity;
   }
 
-  update(id: number, updateActivityDto: UpdateActivityDto) {
-    return `This action updates a #${id} activity`;
+  async update(id: string, updateActivityDto: UpdateActivityDto) {
+    const activity = await this.activityRepository.preload({
+      id: id,
+      ...updateActivityDto,
+    });
+    if (!activity)
+      throw new NotFoundException(`Activitiy with id ${id} not found`);
+    try {
+      await this.activityRepository.save(activity);
+      return activity;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   async remove(id: string) {

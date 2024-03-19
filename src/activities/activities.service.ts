@@ -8,7 +8,7 @@ import {
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 import { Activity, ActivityImage } from './entities';
@@ -22,6 +22,7 @@ export class ActivitiesService {
     private readonly activityRepository: Repository<Activity>,
     @InjectRepository(ActivityImage)
     private readonly activityImageRepository: Repository<ActivityImage>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createActivityDto: CreateActivityDto) {
@@ -87,17 +88,33 @@ export class ActivitiesService {
   }
 
   async update(id: string, updateActivityDto: UpdateActivityDto) {
+    const { images, ...toUpdate } = updateActivityDto;
+
     const activity = await this.activityRepository.preload({
-      id: id,
-      ...updateActivityDto,
-      images: [],
+      id,
+      ...toUpdate,
     });
     if (!activity)
       throw new NotFoundException(`Activitiy with id ${id} not found`);
+    //Create query runner
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      await this.activityRepository.save(activity);
+      if (images) {
+        await queryRunner.manager.delete(ActivityImage, { activity: { id } });
+        activity.images = images.map((image) =>
+          this.activityImageRepository.create({ url: image }),
+        );
+      }
+      await queryRunner.manager.save(activity);
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+      // await this.activityRepository.save(activity);
       return activity;
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       this.handleDBExceptions(error);
     }
   }

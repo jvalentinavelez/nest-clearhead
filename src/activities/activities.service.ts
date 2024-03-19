@@ -134,4 +134,13 @@ export class ActivitiesService {
       'Unexpected error, check server logs',
     );
   }
+
+  async deleteAllActivities() {
+    const query = this.activityRepository.createQueryBuilder('activity');
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
 }

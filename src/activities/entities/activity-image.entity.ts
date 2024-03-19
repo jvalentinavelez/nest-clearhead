@@ -9,6 +9,8 @@ export class ActivityImage {
   @Column('text')
   url: string;
 
-  @ManyToOne(() => Activity, (activity) => activity.images)
+  @ManyToOne(() => Activity, (activity) => activity.images, {
+    onDelete: 'CASCADE',
+  })
   activity: Activity;
 }

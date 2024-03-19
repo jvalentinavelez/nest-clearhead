@@ -8,5 +8,6 @@ import { Activity, ActivityImage } from './entities';
   controllers: [ActivitiesController],
   providers: [ActivitiesService],
   imports: [TypeOrmModule.forFeature([Activity, ActivityImage])],
+  exports: [ActivitiesService, TypeOrmModule],
 })
 export class ActivitiesModule {}

@@ -22,4 +22,8 @@ export class CreateActivityDto {
   @IsArray()
   @IsOptional()
   images?: string[];
+
+  @IsString()
+  @IsOptional()
+  type?: string;
 }

@@ -24,6 +24,12 @@ export class Activity {
   })
   description: string;
 
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  type: string;
+
   @Column('text', {
     unique: true,
   })

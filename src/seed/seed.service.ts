@@ -6,11 +6,11 @@ export class SeedService {
   constructor(private readonly activiesService: ActivitiesService) {}
 
   async runSeed() {
-    await this.insertNewProducts();
+    await this.insertNewActivites();
     return 'SEED Executed';
   }
 
-  private async insertNewProducts() {
+  private async insertNewActivites() {
     this.activiesService.deleteAllActivities();
     return true;
   }

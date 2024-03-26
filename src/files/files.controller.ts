@@ -9,16 +9,27 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  Res,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 // import { fileNamer } from './helpers/fileNamer.helper';
 import { fileNamer, fileFilter } from './helpers/index';
+import { Response } from 'express';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+
+  @Get('activity/:imageName')
+  findActivityImage(
+    @Res() res: Response,
+    @Param('imageName') imageName: string,
+  ) {
+    const path = this.filesService.getStaticActivityImage(imageName);
+    res.sendFile(path);
+  }
 
   @Post('activity')
   @UseInterceptors(
@@ -36,8 +47,11 @@ export class FilesController {
     if (!file) {
       throw new BadRequestException('Make sure that the file is an image');
     }
+
+    const secureUrl = `${file.filename}`;
+
     return {
-      fileName: file.originalname,
+      secureUrl,
     };
   }
 }

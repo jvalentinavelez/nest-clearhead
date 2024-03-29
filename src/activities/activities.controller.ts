@@ -19,31 +19,8 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 export class ActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  @Post()
+  @Post('register')
   create(@Body() createActivityDto: CreateActivityDto) {
     return this.activitiesService.create(createActivityDto);
-  }
-
-  @Get()
-  findAll(@Query() paginatioDto: PaginationDto) {
-    return this.activitiesService.findAll(paginatioDto);
-  }
-
-  @Get(':term')
-  findOne(@Param('term') term: string) {
-    return this.activitiesService.findOnePlain(term);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateActivityDto: UpdateActivityDto,
-  ) {
-    return this.activitiesService.update(id, updateActivityDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.activitiesService.remove(id);
   }
 }

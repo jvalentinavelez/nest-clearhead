@@ -1,8 +1,10 @@
+import { Activity } from '../../activities/entities/activity.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -34,6 +36,9 @@ export class User {
     default: ['user'],
   })
   role: string[];
+
+  @OneToMany(() => Activity, (activity) => activity.user)
+  activity: Activity;
 
   @BeforeInsert()
   CheckFieldsBeforeInsert() {

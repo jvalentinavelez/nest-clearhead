@@ -9,9 +9,10 @@ import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 import { Activity, ActivityImage } from './entities';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class ActivitiesService {
@@ -25,7 +26,7 @@ export class ActivitiesService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createActivityDto: CreateActivityDto) {
+  async create(createActivityDto: CreateActivityDto, user: User) {
     try {
       const { images = [], ...activityDetails } = createActivityDto;
       const activity = this.activityRepository.create({
@@ -33,6 +34,7 @@ export class ActivitiesService {
         images: images.map((image) =>
           this.activityImageRepository.create({ url: image }),
         ),
+        user,
       });
       await this.activityRepository.save(activity);
       return { ...activity, images };
@@ -87,7 +89,7 @@ export class ActivitiesService {
     };
   }
 
-  async update(id: string, updateActivityDto: UpdateActivityDto) {
+  async update(id: string, updateActivityDto: UpdateActivityDto, user: User) {
     const { images, ...toUpdate } = updateActivityDto;
 
     const activity = await this.activityRepository.preload({
@@ -108,6 +110,7 @@ export class ActivitiesService {
           this.activityImageRepository.create({ url: image }),
         );
       }
+      activity.user = user;
       await queryRunner.manager.save(activity);
       await queryRunner.commitTransaction();
       await queryRunner.release();

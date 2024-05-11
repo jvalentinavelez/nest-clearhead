@@ -3,10 +3,13 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ActivityImage } from './';
+import { User } from '../../auth/entities/user.entity';
 
 @Entity({ name: 'activities' })
 export class Activity {
@@ -61,6 +64,9 @@ export class Activity {
     eager: true,
   })
   images?: ActivityImage[];
+
+  @ManyToOne(() => User, (user) => user.activity, { eager: true })
+  user: User;
 
   @BeforeUpdate()
   CheckSlugUpdate() {

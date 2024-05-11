@@ -12,10 +12,10 @@ import {
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
-import { Activity } from './entities/activity.entity';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { Auth } from '../auth/decorators';
-import { ValidRoles } from 'src/auth/interfaces';
+import { PaginationDto } from '../common/dtos/pagination.dto';
+import { Auth, GetUser } from '../auth/decorators';
+import { ValidRoles } from '../auth/interfaces';
+import { User } from '../auth/entities/user.entity';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -23,8 +23,8 @@ export class ActivitiesController {
 
   @Post()
   @Auth(ValidRoles.admin)
-  create(@Body() createActivityDto: CreateActivityDto) {
-    return this.activitiesService.create(createActivityDto);
+  create(@Body() createActivityDto: CreateActivityDto, @GetUser() user: User) {
+    return this.activitiesService.create(createActivityDto, user);
   }
 
   @Get()
@@ -37,8 +37,9 @@ export class ActivitiesController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateActivityDto: UpdateActivityDto,
+    @GetUser() user: User,
   ) {
-    return this.activitiesService.update(id, updateActivityDto);
+    return this.activitiesService.update(id, updateActivityDto, user);
   }
 
   @Delete(':id')

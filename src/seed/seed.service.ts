@@ -12,9 +12,9 @@ export class SeedService {
     const activities = initialData.activities;
     const insertPromises = [];
 
-    activities.forEach((activity) => {
-      insertPromises.push(this.activiesService.create(activity));
-    });
+    // activities.forEach((activity) => {
+    //   insertPromises.push(this.activiesService.create(activity));
+    // });
 
     await Promise.all(insertPromises);
 

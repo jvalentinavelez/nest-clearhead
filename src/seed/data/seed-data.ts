@@ -9,11 +9,33 @@ interface SeedActivity {
 
 type ValidTypes = 'descanso' | 'estimulo' | 'calma';
 
+interface SeedUser {
+  email: string;
+  fullName: string;
+  password: string;
+  role: string[];
+}
+
 interface SeedData {
+  users: SeedUser[];
   activities: SeedActivity[];
 }
 
 export const initialData: SeedData = {
+  users: [
+    {
+      email: 'test1@google.com',
+      fullName: 'Test One',
+      password: 'Abc123',
+      role: ['admin'],
+    },
+    {
+      email: 'test2@google.com',
+      fullName: 'Test Two',
+      password: 'Abc123',
+      role: ['user', 'super'],
+    },
+  ],
   activities: [
     {
       title: 'Dormir',
